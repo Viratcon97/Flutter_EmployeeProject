@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:alphabet_list_scroll_view/alphabet_list_scroll_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,7 +26,7 @@ class EmployeeList extends StatefulWidget {
 class _employeeList extends State<EmployeeList>{
 
   List _items = [];
-
+  List<String> list = [];
   // Fetch content from the json file
   Future<void> readJson() async {
 
@@ -33,7 +34,16 @@ class _employeeList extends State<EmployeeList>{
     final data = await json.decode(response);
     setState(() {
       _items = data;
+
+      _items.forEach((element) {
+        list.add(element["firstName"]);
+      });
+      _items.sort((a, b) => a['firstName'].toLowerCase().compareTo(b['firstName'].toLowerCase()));
+      print("List --> $list");
+      print("Items --> $_items['firstName]");
     });
+
+
   }
 
   @override
@@ -43,33 +53,29 @@ class _employeeList extends State<EmployeeList>{
   }
   @override
   Widget build(BuildContext context) {
-
-    return Column(
-      children: [
-        // Display the data loaded from employees.json
-        _items.length > 0
-        ? Expanded(
-        child: ListView.builder(
-        itemCount: _items.length,
-          itemBuilder: (context, index) {
-            return Card(
-              margin: EdgeInsets.all(10),
-              child: ListTile(
-                leading: Image.network(_items[index]["imageUrl"]),
-                title: Text(_items[index]["firstName"]),
-                subtitle: Text(_items[index]["lastName"]),
-
-                onTap: ()=>{
-                Navigator.push(context, new MaterialPageRoute(builder: (context) => EmployeeDetailScreen(_items[index])
-                    )
-                  )
-                },
-              ),
-            );
+    return AlphabetListScrollView(
+      strList: list,
+      showPreview: true,
+      highlightTextStyle: TextStyle(
+        color: Colors.yellow,
+      ),
+      itemBuilder: (context, index) {
+        return Card(
+          margin: EdgeInsets.all(10),
+          child: ListTile(
+            leading: Image.network(_items[index]["imageUrl"]),onTap: ()=>{
+            Navigator.push(context, new MaterialPageRoute(builder: (context) => EmployeeDetailScreen(_items[index])))
           },
-        ),
-        ): Container()
-      ],
+            title: Text(_items[index]["firstName"]),
+            subtitle: Text(_items[index]["lastName"]),
+          ),
+        );
+      },
+      indexedHeight: (i) {
+        return 100;
+      },
+      keyboardUsage: true,
     );
   }
 }
+

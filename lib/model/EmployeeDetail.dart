@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 class EmployeeDetail{
 
   int id;
@@ -12,7 +14,7 @@ class EmployeeDetail{
   double salary;
   String address;
 
-  EmployeeDetail(
+  EmployeeDetail({
       this.id,
       this.imageUrl,
       this.firstName,
@@ -22,5 +24,21 @@ class EmployeeDetail{
       this.age,
       this.dob,
       this.salary,
-      this.address);
+      this.address});
+
+  factory EmployeeDetail.fromJson(Map<String, dynamic> parsedJson){
+    return EmployeeDetail(
+          id : parsedJson['id'],
+          imageUrl : parsedJson['imageUrl'],
+          firstName : parsedJson['firstName'],
+          lastName : parsedJson['lastName'],
+          email : parsedJson['email'],
+          contactNumber : parsedJson['contactNumber'],
+          age : parsedJson['age'],
+          dob : parsedJson['dob'],
+          salary : parsedJson['salary'],
+          address : parsedJson['address'],
+        );
+  }
 }
+
